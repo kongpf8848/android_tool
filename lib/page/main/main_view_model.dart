@@ -182,6 +182,9 @@ class MainViewModel extends BaseViewModel {
       context,
       devicesList,
       device,
+      title: "请选择设备",
+      tipText: "请输入设备名称",
+      notFoundText: "未找到该设备",
       refreshCallback: () {
         getDeviceList();
       },

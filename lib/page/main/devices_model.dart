@@ -6,5 +6,5 @@ class DevicesModel extends ListFilterItem {
   String id;
 
   DevicesModel(this.brand, this.model, this.id)
-      : super(brand + " " + model + " " + id);
+      : super(brand + " " + model);
 }
