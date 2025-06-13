@@ -1,7 +1,10 @@
 import 'package:android_tool/page/main/main_page.dart';
 import 'package:flutter/material.dart';
-
+import 'package:window_size/window_size.dart';
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setWindowMinSize(const Size(800, 600));
+
   runApp(const MyApp());
 }
 
