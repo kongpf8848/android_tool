@@ -523,6 +523,23 @@ class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
     }
   }
 
+  //查看wifi信息
+  Future<void> getWifiInfo() async{
+    var result=await execAdb([
+      '-s',
+      deviceId,
+      'shell',
+      'cmd',
+      'wifi',
+      'status',
+    ]);
+    if (result != null && result.exitCode == 0) {
+      showResultDialog(content: result.stdout);
+    } else {
+      showResultDialog(content: "查看wifi信息异常:${result?.errText}");
+    }
+  }
+
   Future<String?> showInputDialog({
     String title = "输入文本",
     String hintText = "输入文本",

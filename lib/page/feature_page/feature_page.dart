@@ -163,6 +163,11 @@ class _FeaturePageState extends BasePage<FeaturePage, FeatureViewModel> {
             _buildFeatureButton(
                 IconFont.systemProperty, "查看系统属性", viewModel.getSystemProperty),
           ]),
+          _buildButtonRow([
+            _buildFeatureButton(
+                IconFont.home, "查看wifi信息", viewModel.getWifiInfo),
+            const Spacer(flex: 3),
+          ]),
         ],
       ),
     );
