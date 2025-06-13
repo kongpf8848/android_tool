@@ -445,13 +445,16 @@ class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
     if (outLines == null || outLines.isEmpty) {
       showResultDialog(content: "没有IP地址");
     } else {
-      var ip = "";
+      var ipList = "";
       for (var value in outLines) {
-        value = value.substring(value.indexOf("addr:"), value.length);
-        ip += value.substring(0, value.indexOf(" ")) + "\n";
-        print(value);
+        value = value.substring(value.indexOf("addr:") + 5, value.length);
+        var ip = value.substring(0, value.indexOf(" "));
+        if (ip == "127.0.0.1") {
+          continue;
+        }
+        ipList += ip + "\n";
       }
-      showResultDialog(content: ip);
+      showResultDialog(content: ipList);
     }
   }
 
@@ -524,8 +527,8 @@ class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
   }
 
   //查看wifi信息
-  Future<void> getWifiInfo() async{
-    var result=await execAdb([
+  Future<void> getWifiInfo() async {
+    var result = await execAdb([
       '-s',
       deviceId,
       'shell',
