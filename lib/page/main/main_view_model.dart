@@ -14,13 +14,46 @@ import 'package:process_run/shell.dart';
 
 import 'devices_model.dart';
 
+enum MainTab {
+  home("images/ic_quick_future.svg", "快捷功能"),
+  file("images/ic_folder.svg", "文件管理"),
+  logcat("images/ic_log.svg", "LogCat"),
+  setting("images/ic_settings.svg", "设置");
+
+  final String assetName;
+  final String title;
+
+  bool get isHome => this == home;
+
+  bool get isFile => this == file;
+
+  bool get isLogCat => this == logcat;
+
+  bool get isSetting => this == setting;
+
+  const MainTab(this.assetName, this.title);
+}
+
+enum AdbUrl {
+  windows(
+      "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"),
+  macos(
+      "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip"),
+  linux(
+      "https://dl.google.com/android/repository/platform-tools-latest-linux.zip");
+
+  final String url;
+
+  const AdbUrl(this.url);
+}
+
 class MainViewModel extends BaseViewModel {
   ListFilterController<DevicesModel> devicesController = ListFilterController();
 
   List<DevicesModel> devicesList = [];
   DevicesModel? device;
 
-  int selectedIndex = -1;
+  MainTab selectedTab = MainTab.home;
 
   MainViewModel(context) : super(context);
 
@@ -30,7 +63,7 @@ class MainViewModel extends BaseViewModel {
     await checkAdb();
     if (adbPath.isNotEmpty) {
       await getDeviceList();
-      selectedIndex = 1;
+      selectedTab = MainTab.home;
       notifyListeners();
     }
   }
@@ -64,14 +97,11 @@ class MainViewModel extends BaseViewModel {
         Platform.pathSeparator;
     var url = "";
     if (Platform.isMacOS) {
-      url =
-          "https://dl.google.com/android/repository/platform-tools-latest-darwin.zip";
+      url = AdbUrl.macos.url;
     } else if (Platform.isWindows) {
-      url =
-          "https://dl.google.com/android/repository/platform-tools-latest-windows.zip";
+      url = AdbUrl.windows.url;
     } else {
-      url =
-          "https://dl.google.com/android/repository/platform-tools-latest-linux.zip";
+      url = AdbUrl.linux.url;
     }
     var filePath = downloadPath + "platform-tools-latest.zip";
     var response = await Dio().download(url, filePath);
@@ -216,8 +246,8 @@ class MainViewModel extends BaseViewModel {
     App().setDeviceId("");
   }
 
-  void onLeftItemClick(int index) {
-    selectedIndex = index;
+  void onLeftItemClick(MainTab tab) {
+    selectedTab = tab;
     notifyListeners();
   }
 }

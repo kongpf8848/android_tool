@@ -6,7 +6,6 @@ import 'package:android_tool/page/main/devices_model.dart';
 import 'package:android_tool/widget/adb_setting_dialog.dart';
 import 'package:android_tool/widget/text_view.dart';
 import 'package:desktop_drop/desktop_drop.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +21,11 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends BasePage<MainPage, MainViewModel> {
   @override
+  createViewModel() {
+    return MainViewModel(context);
+  }
+
+  @override
   initState() {
     super.initState();
     viewModel.init();
@@ -29,7 +33,9 @@ class _MainPageState extends BasePage<MainPage, MainViewModel> {
 
   @override
   Widget contentView(BuildContext context) {
-    var select = context.watch<MainViewModel>().selectedIndex;
+    var select = context
+        .watch<MainViewModel>()
+        .selectedTab;
     return Row(
       children: <Widget>[
         DropTarget(
@@ -42,15 +48,10 @@ class _MainPageState extends BasePage<MainPage, MainViewModel> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                Image.asset("images/app_icon.png", width: 60, height: 60),
-                devicesView(),
+                _logoView(),
+                _devicesView(),
                 const SizedBox(height: 20),
-                // const Divider(height: 1),
-                // _leftItem("images/ic_devices_info.svg", "设备信息", 0),
-                _leftItem("images/ic_quick_future.svg", "快捷功能", 1),
-                _leftItem("images/ic_folder.svg", "文件管理", 2),
-                _leftItem("images/ic_log.svg", "LogCat", 3),
-                _leftItem("images/ic_settings.svg", "设置", 4),
+                ..._leftItemsView()
               ],
             ),
           ),
@@ -61,7 +62,7 @@ class _MainPageState extends BasePage<MainPage, MainViewModel> {
             children: [
               // packageNameView(context, select),
               Expanded(
-                child: buildContent(select),
+                child: _buildBoy(select),
               ),
             ],
           ),
@@ -70,62 +71,28 @@ class _MainPageState extends BasePage<MainPage, MainViewModel> {
     );
   }
 
-  Widget buildContent(int value) {
-    // if (value == 0) {
-    //   return DevicesInfoPage(
-    //     deviceId: viewModel.deviceId,
-    //     packageName: viewModel.packageName,
-    //   );
-    // } else
-    if (value == 1) {
+  Widget _buildBoy(MainTab tab) {
+    if (tab.isHome) {
       return FeaturePage(
         deviceId: viewModel.deviceId,
       );
-    } else if (value == 2) {
+    } else if (tab.isFile) {
       return FileManagerPage(viewModel.deviceId);
-    } else if (value == 3) {
+    } else if (tab.isLogCat) {
       return AndroidLogPage(deviceId: viewModel.deviceId);
-    } else if (value == 4) {
+    } else if (tab.isSetting) {
       return AdbSettingDialog(viewModel.adbPath);
     } else {
       return Container();
     }
-    ;
   }
 
-  Widget _leftItem(String image, String name, int index) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: () {
-          viewModel.onLeftItemClick(index);
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: index == viewModel.selectedIndex
-                ? Colors.blue.withOpacity(0.32)
-                : Colors.transparent,
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-          child: Row(
-            children: <Widget>[
-              SvgPicture.asset(
-                image,
-                width: 23,
-                height: 23,
-              ),
-              const SizedBox(width: 10),
-              TextView(name),
-            ],
-          ),
-        ),
-      ),
-    );
+
+  Widget _logoView() {
+    return Image.asset("images/app_icon.png", width: 60, height: 60);
   }
 
-  Widget devicesView() {
+  Widget _devicesView() {
     return InkWell(
       onTap: () {
         viewModel.devicesSelect(context);
@@ -165,8 +132,41 @@ class _MainPageState extends BasePage<MainPage, MainViewModel> {
     );
   }
 
-  @override
-  createViewModel() {
-    return MainViewModel(context);
+
+  List<Widget> _leftItemsView() {
+    var itemList = <Widget>[];
+    for (var tab in MainTab.values) {
+      var widget = Container(
+        margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 15),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () {
+            viewModel.onLeftItemClick(tab);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: tab == viewModel.selectedTab
+                  ? Colors.blue.withOpacity(0.32)
+                  : Colors.transparent,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            child: Row(
+              children: <Widget>[
+                SvgPicture.asset(
+                  tab.assetName,
+                  width: 23,
+                  height: 23,
+                ),
+                const SizedBox(width: 10),
+                TextView(tab.title),
+              ],
+            ),
+          ),
+        ),
+      );
+      itemList.add(widget);
+    }
+    return itemList;
   }
 }
