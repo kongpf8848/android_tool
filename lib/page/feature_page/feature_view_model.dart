@@ -394,7 +394,7 @@ class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
     if (outLines == null || outLines.isEmpty) {
       showResultDialog(content: "没有前台Activity");
     } else {
-      var activity = outLines.first.replaceAll("mCurrentFocus=", "");
+      var activity = outLines.last.replaceAll("mCurrentFocus=", "");
       showResultDialog(content: activity);
     }
   }
