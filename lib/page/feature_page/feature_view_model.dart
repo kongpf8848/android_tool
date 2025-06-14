@@ -277,14 +277,14 @@ class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
       return;
     } else {
       var path = apkFilePath.outLines.first.replaceAll("package:", "");
-      var savePath = await getSavePath(suggestedName: packageName + ".apk");
-      if (savePath == null) return;
+      var saveLocation = await getSaveLocation(suggestedName: packageName + ".apk");
+      if (saveLocation == null) return;
       var result = await execAdb([
         '-s',
         deviceId,
         'pull',
         path,
-        savePath,
+        saveLocation.path,
       ]);
       showResultDialog(
         content: result != null && result.exitCode == 0 ? "保存成功" : "保存失败",

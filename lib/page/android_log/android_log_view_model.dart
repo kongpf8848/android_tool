@@ -128,7 +128,7 @@ class AndroidLogViewModel extends BaseViewModel with PackageHelpMixin {
           }
           logList.add(line);
           notifyListeners();
-          if (isShowLast) {
+          if (isShowLast && scrollController.positions.isNotEmpty) {
             scrollController.jumpTo(
               scrollController.position.maxScrollExtent,
             );
@@ -214,7 +214,7 @@ class AndroidLogViewModel extends BaseViewModel with PackageHelpMixin {
 
   void setShowLast(bool bool) {
     isShowLast = bool;
-    if (findController.text.isEmpty) {
+    if (findController.text.isEmpty && scrollController.positions.isNotEmpty) {
       scrollController.jumpTo(
         scrollController.position.maxScrollExtent,
       );

@@ -203,14 +203,14 @@ class FileManagerViewModel extends BaseViewModel {
 
   /// 保存文件
   Future<void> saveFile(int index) async {
-    var savePath = await getSavePath(suggestedName: files.value[index].name);
-    if (savePath == null) return;
+    var saveLocation = await getSaveLocation(suggestedName: files.value[index].name);
+    if (saveLocation == null) return;
     var result = await execAdb([
       "-s",
       deviceId,
       "pull",
       currentPath + files.value[index].name,
-      savePath
+      saveLocation.path
     ]);
     if (result != null && result.exitCode == 0) {
       showResultDialog(content: "保存成功");
