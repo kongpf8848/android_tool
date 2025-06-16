@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:android_tool/page/common/app.dart';
 import 'package:android_tool/page/common/base_view_model.dart';
 import 'package:android_tool/page/common/key_code.dart';
@@ -10,6 +12,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:process_run/cmd/process_cmd.dart';
 import 'package:process_run/shell_run.dart';
 
 class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
@@ -340,7 +343,8 @@ class FeatureViewModel extends BaseViewModel with PackageHelpMixin {
 
   /// 停止录屏
   Future<void> stopRecordAndSave() async {
-    shell.kill();
+    //发送Control + C
+    shell.kill(ProcessSignal.sigint);
     var path = await getDirectoryPath();
     var pull = await execAdb([
       '-s',
